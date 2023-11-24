@@ -3,6 +3,8 @@ import Root from "../layout/Root";
 import Error from "../layout/Error";
 import Home from "../pages/Home/Home";
 import Meals from "../pages/Meals";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,14 @@ const router = createBrowserRouter([
       },
       {
         path:'/upcoming',
+      },
+      {
+        path:'/login',
+        element:<Login></Login>
+      },
+      {
+        path:'/register',
+        element:<Register></Register>
       }
     ],
   },

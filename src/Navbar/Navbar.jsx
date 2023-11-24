@@ -1,12 +1,15 @@
 import { Link, NavLink } from "react-router-dom";
 import logo from "../assets/logo/reception_8376147.png";
-// import { useContext } from "react";
-// import { AuthContext } from "../provider/AuthProvider";
+
 // import { motion } from "framer-motion";
 import { GiHotMeal } from "react-icons/gi";
+// import { useContext } from "react";
+
+
+
 
 const Navbar = () => {
-  //   const { user, logOut } = useContext(AuthContext);
+    // const { user, logOut } = useContext(AuthContext);
   const navList = (
     <>
       <li>
