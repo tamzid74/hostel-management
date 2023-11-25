@@ -7,8 +7,6 @@ import Category from "./Category";
 
 
 
-
-
 const Home = () => {
   return (
     <div>
