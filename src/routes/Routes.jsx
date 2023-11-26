@@ -5,7 +5,13 @@ import Home from "../pages/Home/Home";
 import Meals from "../pages/Meals";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Dashboard from "../pages/dashboard/Dashboard";
+import Dashboard from "../layout/Dashboard";
+import AdminProfile from "../pages/dashboard/AdminProfile";
+import PrivateRoutes from "./PrivateRoutes";
+import ManageUser from "../pages/dashboard/ManageUser";
+import AddMeal from "../pages/dashboard/AddMeal";
+import UpComing from "../pages/UpComing";
+
 
 const router = createBrowserRouter([
   {
@@ -23,6 +29,7 @@ const router = createBrowserRouter([
       },
       {
         path:'/upcoming',
+        element:<UpComing></UpComing>
       },
       {
         path:'/login',
@@ -35,8 +42,42 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path:'/dashboard',
-    element:<Dashboard></Dashboard>
+    path:'dashboard',
+    element:<PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
+    children:[
+        {
+            path:'adminProfile',
+            element:<AdminProfile></AdminProfile>
+        },
+        {
+            path:'manageUser',
+            element:<ManageUser></ManageUser>
+        },
+        {
+            path:'addMeal',
+            element:<AddMeal></AddMeal>
+        },
+        {
+            path:'allMeal',
+            element:<AdminProfile></AdminProfile>
+        },
+        {
+            path:'allReviews',
+            element:<AdminProfile></AdminProfile>
+        },
+        {
+            path:'serveMeal',
+            element:<AdminProfile></AdminProfile>
+        },
+        {
+            path:'serveMeal',
+            element:<AdminProfile></AdminProfile>
+        },
+        {
+            path:'upcomingMeal',
+            element:<AdminProfile></AdminProfile>
+        },
+    ]
   }
 ]);
 export default router;

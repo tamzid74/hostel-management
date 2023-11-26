@@ -137,7 +137,7 @@ const Navbar = () => {
                   {user?.email && (
                     <li>
                       <NavLink
-                        to="/dashboard"
+                        to="/dashboard/adminProfile"
                         className={({ isActive }) =>
                           isActive ? "text-primary font-semibold" : ""
                         }

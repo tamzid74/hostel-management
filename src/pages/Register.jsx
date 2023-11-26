@@ -10,10 +10,11 @@ import SectionTitle from "../components/SectionTitle";
 import Lottie from "lottie-react";
 import regAnimation from "../assets/images/Register.json";
 import { useForm } from "react-hook-form";
+import useAxiosPublic from "../hook/useAxiosPublic";
 
 const Register = () => {
   const { createUser, updateUser, setUser } = useContext(AuthContext);
-  //   const [regError, setRegError] = useState("");
+  const axiosPublic = useAxiosPublic();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const {
@@ -27,14 +28,26 @@ const Register = () => {
     const toastId = toast.loading("Creating User...");
     createUser(data.email, data.password)
       .then((result) => {
-        updateUser(data.name, data.photo).then(() => {
+        updateUser(data.name, data.photoURL).then(() => {
           setUser((prev) => {
             prev.displayName = data.name;
-            prev.photoURL = data.photo;
+            prev.photoURL = data.photoURL;
             return { ...prev };
           });
           toast.success("User Created", { id: toastId });
-          navigate(`/`);
+          navigate("/");
+          const userInfo = {
+            name: data.name,
+            email: data.email,
+            photoURL: data.photoURL,
+            role: "user",
+            badge: "Bronze",
+          };
+          axiosPublic.post("/users", userInfo).then((res) => {
+            if (res.data.insertedId) {
+              console.log("user saved");
+            }
+          });
         });
       })
       .catch((error) => {
@@ -59,7 +72,7 @@ const Register = () => {
                 <input
                   type="text"
                   placeholder="PhotoUrl"
-                  {...register("photo", { required: true })}
+                  {...register("photoURL", { required: true })}
                   className="input input-bordered rounded-full"
                 />
                 {errors.photo && (

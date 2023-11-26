@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import error from "../assets/images/error.svg";
+import error from "../assets/images/404.gif";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Helmet } from "react-helmet-async";
 import { AwesomeButton } from "react-awesome-button";

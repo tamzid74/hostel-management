@@ -16,37 +16,38 @@ import { useState } from "react";
 import { GoCodeReview } from "react-icons/go";
 import { AwesomeButton } from "react-awesome-button";
 
-const Meals = () => {
+const UpComing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
-  const { data: meals = [] } = useQuery({
-    queryKey: ["meals"],
+  const { data: upComingMeals = [] } = useQuery({
+    queryKey: ["upComingMeals"],
     queryFn: async () => {
       setIsLoading(true);
-      const res = await axiosPublic.get("/meals");
+      const res = await axiosPublic.get("/upComingMeals");
       setIsLoading(false);
       return res.data;
     },
   });
-
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto">
       <Helmet>
-        <title>HostelHub | All Meals</title>
+        <title>HostelHub | UpComing Meals</title>
       </Helmet>
       <SectionTitle
-        heading="All Meals"
+        heading="UpComing Meals"
         subHeading="Comfort Food,Nourishing the Soul"
       ></SectionTitle>
       {isLoading ? (
-        <div className="w-1/2 mx-auto"><Loading></Loading></div>
+        <div className="w-1/2 mx-auto">
+          <Loading></Loading>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-16">
-          {meals.map((meal) => (
+          {upComingMeals.map((meal) => (
             <Card key={meal._id} className="w-full max-w-[26rem] shadow-lg">
               <CardHeader floated={false} color="blue-gray">
                 <img
-                className="w-full h-[200px]"
+                  className="w-full h-[200px]"
                   src={meal.image}
                   alt="ui/ux review check"
                 />
@@ -95,9 +96,7 @@ const Meals = () => {
                     {meal.rating}
                   </Typography>
                 </div>
-                <Typography color="gray">
-                  {meal.ingredient}
-                </Typography>
+                <Typography color="gray">{meal.ingredient}</Typography>
                 <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                   <Tooltip content={`$${meal.price}`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
@@ -119,7 +118,7 @@ const Meals = () => {
                   </Tooltip>
                   <Tooltip content={`${meal.reviews}+ reviews`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
-                    <GoCodeReview className="text-xl" />
+                      <GoCodeReview className="text-xl" />
                     </span>
                   </Tooltip>
                   <Tooltip content={`${meal.likes}+ Likes`}>
@@ -130,7 +129,9 @@ const Meals = () => {
                 </div>
               </CardBody>
               <CardFooter className="pt-3">
-                <AwesomeButton size="lg" className="w-full" type="secondary">Details</AwesomeButton>
+                <AwesomeButton size="lg" className="w-full" type="secondary">
+                  Details
+                </AwesomeButton>
               </CardFooter>
             </Card>
           ))}
@@ -140,4 +141,4 @@ const Meals = () => {
   );
 };
 
-export default Meals;
+export default UpComing;

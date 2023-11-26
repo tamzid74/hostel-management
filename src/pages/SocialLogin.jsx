@@ -3,9 +3,11 @@ import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { AuthContext } from "../provider/Authprovider";
+import useAxiosPublic from "../hook/useAxiosPublic";
 
 const SocialLogin = () => {
   const { googleLogin } = useContext(AuthContext);
+  const axiosPublic = useAxiosPublic();
   const navigate = useNavigate();
   const handleLogin = (media) => {
     const toastId = toast.loading("Signing in....");
@@ -14,6 +16,15 @@ const SocialLogin = () => {
         console.log(result.user);
         toast.success("Signed in...", { id: toastId });
         navigate(`/`);
+        const userInfo = {
+          name: result.user?.displayName,
+          email: result.user?.email,
+          badge: "Bronze",
+          role: "user",
+        };
+        axiosPublic.post("/users", userInfo).then((res) => {
+          console.log(res.data);
+        });
       })
       .catch((error) => {
         console.log(error.message);
