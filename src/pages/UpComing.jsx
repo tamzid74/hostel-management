@@ -15,11 +15,13 @@ import Loading from "../components/Loading";
 import { useState } from "react";
 import { GoCodeReview } from "react-icons/go";
 import { AwesomeButton } from "react-awesome-button";
+// import useAxiosSecure from "../hook/useAxiosSecure";
 
 const UpComing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
-  const { data: upComingMeals = [] } = useQuery({
+//   const axiosSecure = useAxiosSecure();
+  const { data: upComingMeals = [], refetch } = useQuery({
     queryKey: ["upComingMeals"],
     queryFn: async () => {
       setIsLoading(true);
@@ -28,6 +30,20 @@ const UpComing = () => {
       return res.data;
     },
   });
+
+//   const handleLIke = async (upComingMealId) => {
+//     try {
+//       await axiosSecure.patch(`/upComingMeals/${upComingMealId}`, {
+//         likes:
+//           upComingMeals.find((upComingMeal) => upComingMeal._id === upComingMealId).likes + 1,
+//       });
+
+//       refetch();
+//     } catch (error) {
+//       console.error("Error handling", error);
+//     }
+//   };
+
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto">
       <Helmet>
@@ -43,16 +59,20 @@ const UpComing = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-16">
-          {upComingMeals.map((meal) => (
-            <Card key={meal._id} className="w-full max-w-[26rem] shadow-lg">
+          {upComingMeals.map((upComingMeal) => (
+            <Card
+              key={upComingMeal._id}
+              className="w-full max-w-[26rem] shadow-lg"
+            >
               <CardHeader floated={false} color="blue-gray">
                 <img
                   className="w-full h-[200px]"
-                  src={meal.image}
+                  src={upComingMeal.image}
                   alt="ui/ux review check"
                 />
                 <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                 <IconButton
+                //   onClick={() => handleLIke(upComingMeal._id)}
                   size="sm"
                   color="red"
                   variant="text"
@@ -75,7 +95,7 @@ const UpComing = () => {
                     color="blue-gray"
                     className="font-medium"
                   >
-                    {meal.mealTitle}
+                    {upComingMeal.mealTitle}
                   </Typography>
                   <Typography
                     color="blue-gray"
@@ -93,12 +113,12 @@ const UpComing = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                    {meal.rating}
+                    {upComingMeal.rating}
                   </Typography>
                 </div>
-                <Typography color="gray">{meal.ingredient}</Typography>
+                <Typography color="gray">{upComingMeal.ingredient}</Typography>
                 <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
-                  <Tooltip content={`$${meal.price}`}>
+                  <Tooltip content={`$${upComingMeal.price}`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -116,14 +136,14 @@ const UpComing = () => {
                       </svg>
                     </span>
                   </Tooltip>
-                  <Tooltip content={`${meal.reviews}+ reviews`}>
+                  <Tooltip content={`${upComingMeal.reviews}+ reviews`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
                       <GoCodeReview className="text-xl" />
                     </span>
                   </Tooltip>
-                  <Tooltip content={`${meal.likes}+ Likes`}>
+                  <Tooltip content={`${upComingMeal.likes}+ Likes`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
-                      {meal.likes}
+                      {upComingMeal.likes}
                     </span>
                   </Tooltip>
                 </div>

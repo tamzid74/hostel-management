@@ -15,19 +15,33 @@ import Loading from "../components/Loading";
 import { useState } from "react";
 import { GoCodeReview } from "react-icons/go";
 import { AwesomeButton } from "react-awesome-button";
+import noMeal from "../assets/images/no meal.json";
+import Lottie from "lottie-react";
 
 const Meals = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSorting, setSelectedSorting] = useState("lowToHigh");
+
   const { data: meals = [] } = useQuery({
-    queryKey: ["meals"],
+    queryKey: ["meals", search, selectedCategory, selectedSorting],
     queryFn: async () => {
       setIsLoading(true);
-      const res = await axiosPublic.get("/meals");
+      const res = await axiosPublic.get(
+        `/meals?search=${search}&category=${selectedCategory}&sort=${selectedSorting}`
+      );
       setIsLoading(false);
       return res.data;
     },
   });
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchText = e.target.search.value;
+    console.log(searchText);
+    setSearch(searchText);
+  };
 
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto">
@@ -38,15 +52,69 @@ const Meals = () => {
         heading="All Meals"
         subHeading="Comfort Food,Nourishing the Soul"
       ></SectionTitle>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <form onSubmit={handleSearch}>
+          <div className="join max-w-xs">
+            <div>
+              <div>
+                <input
+                  className="input input-bordered input-sm md:input-md w-full max-w-xs rounded-lg join-item "
+                  placeholder="Search"
+                  name="search"
+                />
+              </div>
+            </div>
+            <div className="indicator">
+              <input
+                className="btn btn-primary btn-sm md:btn md:btn-primary rounded-lg join-item"
+                type="submit"
+                value="search"
+              />
+            </div>
+          </div>
+        </form>
+        <div>
+          <select
+            className="select rounded-lg select-secondary w-full max-w-xs"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option selected>Select By Category</option>
+            <option>breakfast</option>
+            <option>lunch</option>
+            <option>dinner</option>
+          </select>
+        </div>
+        <div>
+          <select
+            className="select rounded-lg select-secondary w-full max-w-xs"
+            value={selectedSorting}
+            onChange={(e) => setSelectedSorting(e.target.value)}
+          >
+            <option selected>Select by Price Range</option>
+            <option value="lowToHigh">Price Low to High</option>
+            <option value="highToLow">Price High to Low</option>
+          </select>
+        </div>
+      </div>
       {isLoading ? (
-        <div className="w-1/2 mx-auto"><Loading></Loading></div>
+        <div className="w-1/2 mx-auto">
+          <Loading></Loading>
+        </div>
+      ) : meals.length === 0 ? (
+        <div className="w-1/2 mb-10 mx-auto">
+          <Lottie animationData={noMeal} loop={true}></Lottie>
+          <p className="text-center font-dm text-2xl font-bold text-primary">
+            *Not Ready Yet*
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-16">
           {meals.map((meal) => (
             <Card key={meal._id} className="w-full max-w-[26rem] shadow-lg">
               <CardHeader floated={false} color="blue-gray">
                 <img
-                className="w-full h-[200px]"
+                  className="w-full h-[200px]"
                   src={meal.image}
                   alt="ui/ux review check"
                 />
@@ -95,9 +163,7 @@ const Meals = () => {
                     {meal.rating}
                   </Typography>
                 </div>
-                <Typography color="gray">
-                  {meal.ingredient}
-                </Typography>
+                <Typography color="gray">{meal.ingredient}</Typography>
                 <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                   <Tooltip content={`$${meal.price}`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
@@ -119,7 +185,7 @@ const Meals = () => {
                   </Tooltip>
                   <Tooltip content={`${meal.reviews}+ reviews`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
-                    <GoCodeReview className="text-xl" />
+                      <GoCodeReview className="text-xl" />
                     </span>
                   </Tooltip>
                   <Tooltip content={`${meal.likes}+ Likes`}>
@@ -130,7 +196,9 @@ const Meals = () => {
                 </div>
               </CardBody>
               <CardFooter className="pt-3">
-                <AwesomeButton size="lg" className="w-full" type="secondary">Details</AwesomeButton>
+                <AwesomeButton size="lg" className="w-full" type="secondary">
+                  Details
+                </AwesomeButton>
               </CardFooter>
             </Card>
           ))}
