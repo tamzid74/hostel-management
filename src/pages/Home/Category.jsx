@@ -59,7 +59,7 @@ const Category = () => {
           {categories.map((category, index) => (
             <TabPanel key={index}>
               <div className="grid grid-col-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                {filterMealCategory(category).map((meal) => (
+                {filterMealCategory(category).slice(0,5).map((meal) => (
                   <Card
                     key={meal._id}
                     className="w-full max-w-[26rem] shadow-lg"

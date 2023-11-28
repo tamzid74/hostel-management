@@ -15,13 +15,15 @@ import Loading from "../components/Loading";
 import { useState } from "react";
 import { GoCodeReview } from "react-icons/go";
 import { AwesomeButton } from "react-awesome-button";
+import Lottie from "lottie-react";
+import noMeal from "../assets/images/no meal.json";
 // import useAxiosSecure from "../hook/useAxiosSecure";
 
 const UpComing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
-//   const axiosSecure = useAxiosSecure();
-  const { data: upComingMeals = [], refetch } = useQuery({
+  //   const axiosSecure = useAxiosSecure();
+  const { data: upComingMeals = [] } = useQuery({
     queryKey: ["upComingMeals"],
     queryFn: async () => {
       setIsLoading(true);
@@ -31,18 +33,18 @@ const UpComing = () => {
     },
   });
 
-//   const handleLIke = async (upComingMealId) => {
-//     try {
-//       await axiosSecure.patch(`/upComingMeals/${upComingMealId}`, {
-//         likes:
-//           upComingMeals.find((upComingMeal) => upComingMeal._id === upComingMealId).likes + 1,
-//       });
+  //   const handleLIke = async (upComingMealId) => {
+  //     try {
+  //       await axiosSecure.patch(`/upComingMeals/${upComingMealId}`, {
+  //         likes:
+  //           upComingMeals.find((upComingMeal) => upComingMeal._id === upComingMealId).likes + 1,
+  //       });
 
-//       refetch();
-//     } catch (error) {
-//       console.error("Error handling", error);
-//     }
-//   };
+  //       refetch();
+  //     } catch (error) {
+  //       console.error("Error handling", error);
+  //     }
+  //   };
 
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto">
@@ -56,6 +58,13 @@ const UpComing = () => {
       {isLoading ? (
         <div className="w-1/2 mx-auto">
           <Loading></Loading>
+        </div>
+      ) : upComingMeals.length === 0 ? (
+        <div className="w-1/2 mb-10 mx-auto">
+          <Lottie animationData={noMeal} loop={true}></Lottie>
+          <p className="text-center font-dm text-2xl font-bold text-primary">
+            *Not Ready Yet*
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-16">
@@ -72,7 +81,7 @@ const UpComing = () => {
                 />
                 <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                 <IconButton
-                //   onClick={() => handleLIke(upComingMeal._id)}
+                  //   onClick={() => handleLIke(upComingMeal._id)}
                   size="sm"
                   color="red"
                   variant="text"

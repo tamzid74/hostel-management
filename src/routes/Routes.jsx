@@ -11,7 +11,14 @@ import PrivateRoutes from "./PrivateRoutes";
 import ManageUser from "../pages/dashboard/ManageUser";
 import AddMeal from "../pages/dashboard/AddMeal";
 import UpComing from "../pages/UpComing";
-
+import MealDetails from "../pages/MealDetails";
+import AllMeal from "../pages/dashboard/AllMeal";
+import AllReviews from "../pages/dashboard/AllReviews";
+import Update from "../pages/dashboard/Update";
+import ServeMeal from "../pages/dashboard/ServeMeal";
+import MyProfile from "../pages/dashboard/MyProfile";
+import RequestedMeal from "../pages/dashboard/RequestedMeal";
+import MyReviews from "../pages/dashboard/MyReviews";
 
 const router = createBrowserRouter([
   {
@@ -24,60 +31,80 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path:'/meals',
-        element:<Meals></Meals>
+        path: "/meals",
+        element: <Meals></Meals>,
       },
       {
-        path:'/upcoming',
-        element:<UpComing></UpComing>
+        path: "/update/:id",
+        element: <Update></Update>,
       },
       {
-        path:'/login',
-        element:<Login></Login>
+        path: "/upcoming",
+        element: <UpComing></UpComing>,
       },
       {
-        path:'/register',
-        element:<Register></Register>
-      }
+        path: "/details/:id",
+        element: <MealDetails></MealDetails>,
+      },
+      {
+        path: "/login",
+        element: <Login></Login>,
+      },
+      {
+        path: "/register",
+        element: <Register></Register>,
+      },
     ],
   },
   {
-    path:'dashboard',
-    element:<PrivateRoutes><Dashboard></Dashboard></PrivateRoutes>,
-    children:[
-        {
-            path:'adminProfile',
-            element:<AdminProfile></AdminProfile>
-        },
-        {
-            path:'manageUser',
-            element:<ManageUser></ManageUser>
-        },
-        {
-            path:'addMeal',
-            element:<AddMeal></AddMeal>
-        },
-        {
-            path:'allMeal',
-            element:<AdminProfile></AdminProfile>
-        },
-        {
-            path:'allReviews',
-            element:<AdminProfile></AdminProfile>
-        },
-        {
-            path:'serveMeal',
-            element:<AdminProfile></AdminProfile>
-        },
-        {
-            path:'serveMeal',
-            element:<AdminProfile></AdminProfile>
-        },
-        {
-            path:'upcomingMeal',
-            element:<AdminProfile></AdminProfile>
-        },
-    ]
-  }
+    path: "dashboard",
+    element: (
+      <PrivateRoutes>
+        <Dashboard></Dashboard>
+      </PrivateRoutes>
+    ),
+    children: [
+      {
+        path: "adminProfile",
+        element: <AdminProfile></AdminProfile>,
+      },
+      {
+        path: "myProfile",
+        element: <MyProfile></MyProfile>,
+      },
+      {
+        path: "requestedMeal",
+        element: <RequestedMeal></RequestedMeal>,
+      },
+      {
+        path: "myReviews",
+        element: <MyReviews></MyReviews>,
+      },
+      {
+        path: "manageUser",
+        element: <ManageUser></ManageUser>,
+      },
+      {
+        path: "addMeal",
+        element: <AddMeal></AddMeal>,
+      },
+      {
+        path: "allMeal",
+        element: <AllMeal></AllMeal>,
+      },
+      {
+        path: "allReviews",
+        element: <AllReviews></AllReviews>,
+      },
+      {
+        path: "serveMeal",
+        element: <ServeMeal></ServeMeal>,
+      },
+      {
+        path: "upcomingMeal",
+        element: <AdminProfile></AdminProfile>,
+      },
+    ],
+  },
 ]);
 export default router;

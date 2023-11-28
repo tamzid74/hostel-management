@@ -4,13 +4,15 @@ import useAxiosSecure from "../../hook/useAxiosSecure";
 import SectionTitle from "../../components/SectionTitle";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import { useState } from "react";
 
 const ManageUser = () => {
   const axiosSecure = useAxiosSecure();
+  const [search, setSearch] = useState("");
   const { data: users = [], refetch } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["users", search],
     queryFn: async () => {
-      const res = await axiosSecure.get("/users");
+      const res = await axiosSecure.get(`/users?search=${search}`);
       return res.data;
     },
   });
@@ -18,7 +20,6 @@ const ManageUser = () => {
     axiosSecure.patch(`/users/admin/${user._id}`).then((res) => {
       console.log(res);
       refetch();
-      //   Swal.fire(`${user.name} is an admin`);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -52,12 +53,38 @@ const ManageUser = () => {
       }
     });
   };
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const searchText = e.target.search.value;
+    console.log(searchText);
+    setSearch(searchText);
+  };
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto mt-10">
       <Helmet>
         <title>HostelHub|Dashboard|ManageUser</title>
       </Helmet>
       <SectionTitle heading="User Section"></SectionTitle>
+      <form className="mb-5" onSubmit={handleSearch}>
+        <div className="join max-w-xs">
+          <div>
+            <div>
+              <input
+                className="input input-bordered input-sm md:input-md w-full max-w-xs rounded-lg join-item "
+                placeholder="search by name or email"
+                name="search"
+              />
+            </div>
+          </div>
+          <div className="indicator">
+            <input
+              className="btn btn-primary btn-sm md:btn md:btn-primary rounded-lg join-item"
+              type="submit"
+              value="search"
+            />
+          </div>
+        </div>
+      </form>
       <section className="container px-4 mx-auto">
         <div className="flex items-center gap-x-3">
           <h2 className="text-lg font-medium text-gray-800 dark:text-white">
@@ -147,7 +174,10 @@ const ManageUser = () => {
                         </td>
                         <td className="px-4 py-4 text-sm font-medium text-gray-700 whitespace-nowrap"></td>
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
-                          <button onClick={()=> handleDeleteUser(user)} className="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
+                          <button
+                            onClick={() => handleDeleteUser(user)}
+                            className="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
+                          >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"

@@ -2,7 +2,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Typography,
   Tooltip,
   IconButton,
@@ -14,9 +13,9 @@ import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
 import { useState } from "react";
 import { GoCodeReview } from "react-icons/go";
-import { AwesomeButton } from "react-awesome-button";
 import noMeal from "../assets/images/no meal.json";
 import Lottie from "lottie-react";
+import { Link } from "react-router-dom";
 
 const Meals = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,11 +35,33 @@ const Meals = () => {
       return res.data;
     },
   });
+
+  // const fetchMeals = async ({ pageParam = 1 }) => {
+  //   setIsLoading(true);
+  //   const res = await axiosPublic.get(
+  //     `/meals?search=${search}&category=${selectedCategory}&sort=${selectedSorting}`
+  //   );
+  //   setIsLoading(false);
+  //   return res.data;
+  // };
+  // const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery(
+  //   ["meals", search, selectedCategory, selectedSorting],
+  //   fetchMeals,
+  //   {
+  //     getNextPageParam: (lastPage, allPage) => {
+  //       return lastPage.page + 1;
+  //     },
+  //   }
+  // );
+
+  // const meals = data ? data.pages.flatMap((page) => page.data) : [];
+
   const handleSearch = (e) => {
     e.preventDefault();
     const searchText = e.target.search.value;
     console.log(searchText);
     setSearch(searchText);
+    // fetchNextPage(1);
   };
 
   return (
@@ -111,30 +132,32 @@ const Meals = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-16">
           {meals.map((meal) => (
-            <Card key={meal._id} className="w-full max-w-[26rem] shadow-lg">
-              <CardHeader floated={false} color="blue-gray">
-                <img
-                  className="w-full h-[200px]"
-                  src={meal.image}
-                  alt="ui/ux review check"
-                />
-                <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
-                <IconButton
-                  size="sm"
-                  color="red"
-                  variant="text"
-                  className="!absolute top-4 right-4 rounded-full"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-6 w-6"
+            <Card key={meal._id} className=" w-[275px] lg:w-full shadow-lg">
+              <Link to={`/details/${meal._id}`}>
+                <CardHeader floated={false} color="blue-gray">
+                  <img
+                    className="w-full h-[200px]"
+                    src={meal.image}
+                    alt="ui/ux review check"
+                  />
+                  <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
+                  <IconButton
+                    size="sm"
+                    color="red"
+                    variant="text"
+                    className="!absolute top-4 right-4 rounded-full"
                   >
-                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
-                  </svg>
-                </IconButton>
-              </CardHeader>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
+                    >
+                      <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                    </svg>
+                  </IconButton>
+                </CardHeader>
+              </Link>
               <CardBody>
                 <div className="mb-3 flex items-center justify-between">
                   <Typography
@@ -163,7 +186,7 @@ const Meals = () => {
                     {meal.rating}
                   </Typography>
                 </div>
-                <Typography color="gray">{meal.ingredient}</Typography>
+                <Typography className="text-sm" color="gray">{meal.ingredient}</Typography>
                 <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                   <Tooltip content={`$${meal.price}`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">
@@ -195,11 +218,6 @@ const Meals = () => {
                   </Tooltip>
                 </div>
               </CardBody>
-              <CardFooter className="pt-3">
-                <AwesomeButton size="lg" className="w-full" type="secondary">
-                  Details
-                </AwesomeButton>
-              </CardFooter>
             </Card>
           ))}
         </div>
