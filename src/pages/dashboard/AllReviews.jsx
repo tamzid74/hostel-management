@@ -8,6 +8,7 @@ import Loading from "../../components/Loading";
 import Swal from "sweetalert2";
 import noMeal from "../../assets/images/review.json";
 import Lottie from "lottie-react";
+import { Link } from "react-router-dom";
 
 /* eslint-disable react/no-unknown-property */
 const AllReviews = () => {
@@ -169,14 +170,14 @@ const AllReviews = () => {
                               {review.like}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              {review.reviewCount}
+                              {review.reviews}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              {/* <Link to={`/details/${meals._id}`}>
+                              <Link to={`/details/${review.mealId}`}>
                                 <button className="transition-colors duration-200 dark:hover:text-primary dark:text-gray-300 hover:text-primary focus:outline-none">
                                   View Details
                                 </button>
-                              </Link> */}
+                              </Link>
                             </td>
 
                             <td className="px-4 py-4 text-sm whitespace-nowrap">

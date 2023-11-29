@@ -17,12 +17,11 @@ import { GoCodeReview } from "react-icons/go";
 import { AwesomeButton } from "react-awesome-button";
 import Lottie from "lottie-react";
 import noMeal from "../assets/images/no meal.json";
-// import useAxiosSecure from "../hook/useAxiosSecure";
+
 
 const UpComing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
-  //   const axiosSecure = useAxiosSecure();
   const { data: upComingMeals = [] } = useQuery({
     queryKey: ["upComingMeals"],
     queryFn: async () => {

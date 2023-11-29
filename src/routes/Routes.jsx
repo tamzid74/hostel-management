@@ -16,9 +16,10 @@ import AllMeal from "../pages/dashboard/AllMeal";
 import AllReviews from "../pages/dashboard/AllReviews";
 import Update from "../pages/dashboard/Update";
 import ServeMeal from "../pages/dashboard/ServeMeal";
-import MyProfile from "../pages/dashboard/MyProfile";
+// import MyProfile from "../pages/dashboard/MyProfile";
 import RequestedMeal from "../pages/dashboard/RequestedMeal";
 import MyReviews from "../pages/dashboard/MyReviews";
+import MealPackage from "../pages/payment/MealPackage";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/update/:id",
-        element: <Update></Update>,
+        element: (
+          <PrivateRoutes>
+            <Update></Update>
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: "/payment/:id",
+        element: (
+          <PrivateRoutes>
+            <MealPackage></MealPackage>
+          </PrivateRoutes>
+        ),
       },
       {
         path: "/upcoming",
@@ -65,13 +78,13 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "adminProfile",
+        path: "profile",
         element: <AdminProfile></AdminProfile>,
       },
-      {
-        path: "myProfile",
-        element: <MyProfile></MyProfile>,
-      },
+      // {
+      //   path: "myProfile",
+      //   element: <MyProfile></MyProfile>,
+      // },
       {
         path: "requestedMeal",
         element: <RequestedMeal></RequestedMeal>,

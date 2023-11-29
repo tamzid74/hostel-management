@@ -10,11 +10,16 @@ import { AwesomeButton } from "react-awesome-button";
 import { AuthContext } from "../provider/Authprovider";
 import Swal from "sweetalert2";
 import { Textarea, Button } from "@material-tailwind/react";
+import ReviewCard from "./Home/ReviewCard";
 
 const MealDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
   const [isRequesting, setIsRequesting] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
+
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const [review, setReview] = useState("");
@@ -29,6 +34,7 @@ const MealDetails = () => {
     },
   });
   const {
+    _id,
     image,
     mealTitle,
     distributor_Name,
@@ -39,6 +45,20 @@ const MealDetails = () => {
     reviews,
     likes,
   } = meals;
+
+  const { data: reviewsData = [] } = useQuery({
+    queryKey: ["reviewsData"],
+    queryFn: async () => {
+      setIsLoading(true);
+      const res = await axiosSecure.get("/reviews");
+      const mealReviews = res.data.filter(
+        (reviews) => reviews.mealId === `${_id}`
+      );
+      setIsLoading(false);
+      return mealReviews;
+    },
+  });
+  console.log(reviewsData);
 
   const handleMealRequest = async () => {
     if (!user?.email) {
@@ -55,7 +75,7 @@ const MealDetails = () => {
     const res = await axiosSecure.post("/meal-requests", {
       meal: mealTitle,
       userName: user?.displayName,
-      userEmail: user?.email,
+      email: user?.email,
       status: "pending",
       like: likes,
       review: reviews,
@@ -83,18 +103,23 @@ const MealDetails = () => {
       return;
     }
     const reviewInfo = {
+      mealId: _id,
       meal: mealTitle,
-      user_email: user?.email,
+      email: user?.email,
+      pic:user?.photoURL,
       user_name: user?.displayName,
       review: review,
-      reviewCount: reviews,
+      reviews: reviews,
       like: likes,
       img: image,
       description: description,
       date: date,
     };
+
     axiosSecure.post("/review", reviewInfo).then((res) => {
       console.log(res.data);
+      setReviewCount(reviewCount + 1);
+
       // setReview(" ");
       Swal.fire({
         position: "center",
@@ -104,6 +129,22 @@ const MealDetails = () => {
         timer: 1500,
       });
     });
+  };
+  console.log(reviewsData);
+
+  const handleLike = async () => {
+    if (!user?.email) {
+      Swal.fire("You Need to login First");
+      return;
+    }
+
+    if (!isLiked) {
+      setIsLiked(true);
+      setLikeCount(likeCount + 1);
+      await axiosSecure.patch(`/meal/${id}`, {
+        likes: likeCount + 1,
+      });
+    }
   };
 
   return (
@@ -155,7 +196,12 @@ const MealDetails = () => {
                     </svg>
                     {rating}
                   </Typography>
-                  <button className="btn btn-ghost rounded-3xl">
+                  <button
+                    className={`btn btn-ghost rounded-3xl ${
+                      isLiked ? "text-red-500" : ""
+                    }`}
+                    onClick={handleLike}
+                  >
                     <BiLike className="text-2xl" />
                   </button>
                 </div>
@@ -182,7 +228,15 @@ const MealDetails = () => {
           </div>
         </section>
       )}
+
       <div className="w-full max-w-[1250px] px-[25px] mx-auto mt-10">
+          <h1 className="text-3xl font-dm font-medium border-b-4">Meal Reviews:</h1>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
+          {reviewsData.map((data, index) => (
+            <ReviewCard key={index} data={data}></ReviewCard>
+          ))}
+        </div>
+
         <h1 className="text-primary">Give Your Review</h1>
         <div className="relative w-[32rem]">
           <Textarea

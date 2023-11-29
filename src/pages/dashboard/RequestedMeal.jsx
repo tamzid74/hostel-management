@@ -1,29 +1,32 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useAxiosSecure from "../../hook/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import SectionTitle from "../../components/SectionTitle";
 import Loading from "../../components/Loading";
+import { AuthContext } from "../../provider/Authprovider";
 
 const RequestedMeal = () => {
   const axiosSecure = useAxiosSecure();
+  const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   const { data: mealRequests = [] } = useQuery({
     queryKey: ["mealRequests"],
     queryFn: async () => {
       setIsLoading(true);
-      const res = await axiosSecure.get("/mealRequests");
+      const res = await axiosSecure.get(`/mealRequest/?email=${user?.email}`);
       setIsLoading(false);
       return res.data;
     },
   });
+  console.log(mealRequests);
 
   return (
     <div className="max-w-6xl mx-auto p-5 mt-10">
       <Helmet>
-        <title>HostelHub|Dashboard|Serve Meals</title>
+        <title>HostelHub|Dashboard|Requested Meal</title>
       </Helmet>
-      <SectionTitle heading="Serve Meals"></SectionTitle>
+      <SectionTitle heading="Requested Meal"></SectionTitle>
 
       {isLoading ? (
         <div className="w-1/2 mx-auto">
@@ -33,7 +36,7 @@ const RequestedMeal = () => {
         <section className="container px-4 mx-auto">
           <div className="flex items-center gap-x-3">
             <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-              Serve Meals
+              Requested Meal
             </h2>
 
             <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">

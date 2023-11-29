@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { AuthContext } from "../provider/Authprovider";
 import { AwesomeButton } from "react-awesome-button";
 
+
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const navList = (
@@ -31,42 +32,6 @@ const Navbar = () => {
           Meals
         </NavLink>
       </li>
-      {/* {user?.email && (
-        <li>
-          <NavLink
-            to="/appliedjobs"
-            className={({ isActive }) =>
-              isActive ? "text-primary font-semibold" : ""
-            }
-          >
-            Applied Jobs
-          </NavLink>
-        </li>
-      )}
-      {user?.email && (
-        <li>
-          <NavLink
-            to="/addajob"
-            className={({ isActive }) =>
-              isActive ? "text-primary font-semibold" : ""
-            }
-          >
-            Add A Job
-          </NavLink>
-        </li>
-      )} */}
-      {/* {user?.email && (
-        <li>
-          <NavLink
-            to="/myjobs"
-            className={({ isActive }) =>
-              isActive ? "text-primary font-semibold" : ""
-            }
-          >
-            My Jobs
-          </NavLink>
-        </li>
-      )} */}
       <li>
         <NavLink
           to="/upcoming"
@@ -133,11 +98,10 @@ const Navbar = () => {
                   className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
                 >
                   <li>{user && <span>{user?.displayName}</span>}</li>
-                  {/* <li>{user && <span>{user.email}</span>}</li> */}
                   {user?.email && (
                     <li>
                       <NavLink
-                        to="/dashboard/adminProfile"
+                        to="/dashboard/profile"
                         className={({ isActive }) =>
                           isActive ? "text-primary font-semibold" : ""
                         }

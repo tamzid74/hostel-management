@@ -16,6 +16,7 @@ import { GoCodeReview } from "react-icons/go";
 import noMeal from "../assets/images/no meal.json";
 import Lottie from "lottie-react";
 import { Link } from "react-router-dom";
+import Select from "react-select";
 
 const Meals = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +25,7 @@ const Meals = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSorting, setSelectedSorting] = useState("lowToHigh");
 
-  const { data: meals = [] } = useQuery({
+  const { data: meals = [], refetch } = useQuery({
     queryKey: ["meals", search, selectedCategory, selectedSorting],
     queryFn: async () => {
       setIsLoading(true);
@@ -61,7 +62,19 @@ const Meals = () => {
     const searchText = e.target.search.value;
     console.log(searchText);
     setSearch(searchText);
+    refetch();
     // fetchNextPage(1);
+  };
+
+  const selectedCategoryOptions = [
+    { label: "All Categories", value: "" },
+    { label: "Breakfast", value: "breakfast" },
+    { label: "Lunch", value: "lunch" },
+    { label: "Dinner", value: "dinner" },
+  ];
+
+  const handleCategoryChange = (selectedOption) => {
+    setSelectedCategory(selectedOption.value);
   };
 
   return (
@@ -95,16 +108,15 @@ const Meals = () => {
           </div>
         </form>
         <div>
-          <select
-            className="select rounded-lg select-secondary w-full max-w-xs"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option selected>Select By Category</option>
-            <option>breakfast</option>
-            <option>lunch</option>
-            <option>dinner</option>
-          </select>
+          <Select
+            className=" rounded-lg  w-full max-w-xs"
+            value={selectedCategoryOptions.find(
+              (option) => option.value === selectedCategory
+            )}
+            onChange={handleCategoryChange}
+            options={selectedCategoryOptions}
+            defaultValue={selectedCategoryOptions[0]}
+          />
         </div>
         <div>
           <select
@@ -186,7 +198,9 @@ const Meals = () => {
                     {meal.rating}
                   </Typography>
                 </div>
-                <Typography className="text-sm" color="gray">{meal.ingredient}</Typography>
+                <Typography className="text-sm" color="gray">
+                  {meal.ingredient}
+                </Typography>
                 <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                   <Tooltip content={`$${meal.price}`}>
                     <span className="cursor-pointer rounded-full border border-gray-900/5 bg-gray-900/5 p-3 text-gray-900 transition-colors hover:border-gray-900/10 hover:bg-gray-900/10 hover:!opacity-100 group-hover:opacity-70">

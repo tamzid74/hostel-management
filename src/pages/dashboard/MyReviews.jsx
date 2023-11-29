@@ -6,12 +6,14 @@ import Loading from "../../components/Loading";
 import Lottie from "lottie-react";
 import noMeal from "../../assets/images/review.json";
 import useAxiosSecure from "../../hook/useAxiosSecure";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { AuthContext } from "../../provider/Authprovider";
 
 /* eslint-disable react/no-unknown-property */
 const MyReviews = () => {
   const axiosSecure = useAxiosSecure();
+  const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
   // const [updatedReview, setUpdatedReview] = useState("");
   // const { data: meals = [] } = useQuery({
@@ -27,11 +29,12 @@ const MyReviews = () => {
     queryKey: ["reviews"],
     queryFn: async () => {
       setIsLoading(true);
-      const res = await axiosSecure.get("/reviews");
+      const res = await axiosSecure.get(`/review/?email=${user?.email}`);
       setIsLoading(false);
       return res.data;
     },
   });
+  console.log(reviews);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -69,7 +72,8 @@ const MyReviews = () => {
     });
 
     if (updatedReviewText) {
-      axiosSecure.patch(`/reviews/${id}`, { review: updatedReviewText })
+      axiosSecure
+        .patch(`/reviews/${id}`, { review: updatedReviewText })
         .then((res) => {
           console.log(res);
           refetch();
@@ -202,10 +206,10 @@ const MyReviews = () => {
                               {review.like}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              {review.reviewCount}
+                              {review.reviews}
                             </td>
                             <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">
-                              <Link>
+                              <Link to={`/details/${review.mealId}`}>
                                 <button className="transition-colors duration-200 dark:hover:text-primary dark:text-gray-300 hover:text-primary focus:outline-none">
                                   View Details
                                 </button>
@@ -235,11 +239,7 @@ const MyReviews = () => {
                                 </button>
 
                                 <button
-                                  // onClick={() =>
-                                  //   document
-                                  //     .getElementById("my_modal_5")
-                                  //     .showModal()
-                                  // }
+                                 
                                   onClick={() => updateReview(review._id)}
                                   className="text-gray-500 transition-colors duration-200 dark:hover:text-yellow-500 dark:text-gray-300 hover:text-yellow-500 focus:outline-none"
                                 >
@@ -258,46 +258,6 @@ const MyReviews = () => {
                                     />
                                   </svg>
                                 </button>
-                                {/* <dialog
-                                  id="my_modal_5"
-                                  className="modal sm:modal-middle"
-                                >
-                                  <div className="modal-box">
-                                    <form method="dialog">
-                                      <button className="btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                                        ✕
-                                      </button>
-                                    </form>
-                                    <p className="text-primary text-center text-xl font-semibold ">
-                                      Give Review
-                                    </p>
-
-                                    <div className="form-control">
-                                      <label className="label text-center">
-                                        <span className="label-text"> </span>
-                                      </label>
-                                      <textarea
-                                        onChange={(e) =>
-                                          updateReview(e.target.value)
-                                        }
-                                        name="review"
-                                        className="textarea textarea-bordered h-24"
-                                        placeholder="write your review here..."
-                                        defaultValue={review.review}
-                                      ></textarea>
-                                    </div>
-
-                                    <div className="modal-action">
-                                      <form method="dialog">
-                                        <input
-                                          type="submit"
-                                          value="Submit"
-                                          className="btn btn-sm md:btn-md btn-primary"
-                                        />
-                                      </form>
-                                    </div>
-                                  </div>
-                                </dialog> */}
                               </div>
                             </td>
                           </tr>
