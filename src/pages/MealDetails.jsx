@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../hook/useAxiosSecure";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../components/Loading";
 import { Typography } from "@material-tailwind/react";
@@ -16,15 +16,15 @@ const MealDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
   const [isRequesting, setIsRequesting] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
+  const [mealReviews, setMealReviews] = useState([]);
 
   const { id } = useParams();
   const { user } = useContext(AuthContext);
   const [review, setReview] = useState("");
 
-  const { data: meals = [] } = useQuery({
+  const { data: meals = [], refetch } = useQuery({
     queryKey: ["meals", id],
     queryFn: async () => {
       setIsLoading(true);
@@ -46,19 +46,14 @@ const MealDetails = () => {
     likes,
   } = meals;
 
-  const { data: reviewsData = [] } = useQuery({
-    queryKey: ["reviewsData"],
-    queryFn: async () => {
-      setIsLoading(true);
-      const res = await axiosSecure.get("/reviews");
+  useEffect(() => {
+    axiosSecure.get("/reviews").then((res) => {
       const mealReviews = res.data.filter(
         (reviews) => reviews.mealId === `${_id}`
       );
-      setIsLoading(false);
-      return mealReviews;
-    },
-  });
-  console.log(reviewsData);
+      setMealReviews(mealReviews);
+    });
+  }, [_id, axiosSecure]);
 
   const handleMealRequest = async () => {
     if (!user?.email) {
@@ -106,7 +101,7 @@ const MealDetails = () => {
       mealId: _id,
       meal: mealTitle,
       email: user?.email,
-      pic:user?.photoURL,
+      pic: user?.photoURL,
       user_name: user?.displayName,
       review: review,
       reviews: reviews,
@@ -119,8 +114,7 @@ const MealDetails = () => {
     axiosSecure.post("/review", reviewInfo).then((res) => {
       console.log(res.data);
       setReviewCount(reviewCount + 1);
-
-      // setReview(" ");
+      setMealReviews((prevReviews) => [...prevReviews, res.data]);
       Swal.fire({
         position: "center",
         icon: "success",
@@ -130,7 +124,6 @@ const MealDetails = () => {
       });
     });
   };
-  console.log(reviewsData);
 
   const handleLike = async () => {
     if (!user?.email) {
@@ -138,13 +131,11 @@ const MealDetails = () => {
       return;
     }
 
-    if (!isLiked) {
-      setIsLiked(true);
-      setLikeCount(likeCount + 1);
-      await axiosSecure.patch(`/meal/${id}`, {
-        likes: likeCount + 1,
-      });
-    }
+    setLikeCount(likeCount + 1);
+    await axiosSecure.patch(`/meal/${id}`, {
+      likes: likeCount + 1,
+    });
+    refetch();
   };
 
   return (
@@ -197,9 +188,7 @@ const MealDetails = () => {
                     {rating}
                   </Typography>
                   <button
-                    className={`btn btn-ghost rounded-3xl ${
-                      isLiked ? "text-red-500" : ""
-                    }`}
+                    className="btn btn-ghost rounded-3xl"
                     onClick={handleLike}
                   >
                     <BiLike className="text-2xl" />
@@ -230,11 +219,16 @@ const MealDetails = () => {
       )}
 
       <div className="w-full max-w-[1250px] px-[25px] mx-auto mt-10">
-          <h1 className="text-3xl font-dm font-medium border-b-4">Meal Reviews:</h1>
+        <h1 className="text-3xl font-dm font-medium border-b-4">
+          Meal Reviews:
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6">
-          {reviewsData.map((data, index) => (
+          {mealReviews.map((data, index) => (
             <ReviewCard key={index} data={data}></ReviewCard>
           ))}
+          {/* {reviewsData.map((data, index) => (
+            <ReviewCard key={index} data={data}></ReviewCard>
+          ))} */}
         </div>
 
         <h1 className="text-primary">Give Your Review</h1>

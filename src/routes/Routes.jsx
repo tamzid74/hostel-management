@@ -20,6 +20,7 @@ import ServeMeal from "../pages/dashboard/ServeMeal";
 import RequestedMeal from "../pages/dashboard/RequestedMeal";
 import MyReviews from "../pages/dashboard/MyReviews";
 import MealPackage from "../pages/payment/MealPackage";
+import UpcomingMeal from "../pages/dashboard/UpcomingMeal";
 
 const router = createBrowserRouter([
   {
@@ -115,7 +116,7 @@ const router = createBrowserRouter([
       },
       {
         path: "upcomingMeal",
-        element: <AdminProfile></AdminProfile>,
+        element: <UpcomingMeal></UpcomingMeal>,
       },
     ],
   },

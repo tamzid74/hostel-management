@@ -168,6 +168,10 @@ const Category = () => {
           ))}
         </Tabs>
       )}
+
+      <div className="flex justify-center items-center mt-10">
+        <Link to="/meals"><AwesomeButton>View All</AwesomeButton></Link>
+      </div>
     </div>
   );
 };

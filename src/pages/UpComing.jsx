@@ -2,7 +2,6 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Typography,
   Tooltip,
   IconButton,
@@ -12,17 +11,24 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosPublic from "../hook/useAxiosPublic";
 import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { GoCodeReview } from "react-icons/go";
-import { AwesomeButton } from "react-awesome-button";
 import Lottie from "lottie-react";
 import noMeal from "../assets/images/no meal.json";
+import useAxiosSecure from "../hook/useAxiosSecure";
+import { AuthContext } from "../provider/Authprovider";
+import Swal from "sweetalert2";
 
 
 const UpComing = () => {
   const [isLoading, setIsLoading] = useState(true);
   const axiosPublic = useAxiosPublic();
-  const { data: upComingMeals = [] } = useQuery({
+  const axiosSecure = useAxiosSecure();
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [likedMeals, setLikedMeals] = useState([]);
+  const { user } = useContext(AuthContext);
+  const { data: upComingMeals = [], refetch } = useQuery({
     queryKey: ["upComingMeals"],
     queryFn: async () => {
       setIsLoading(true);
@@ -32,18 +38,30 @@ const UpComing = () => {
     },
   });
 
-  //   const handleLIke = async (upComingMealId) => {
-  //     try {
-  //       await axiosSecure.patch(`/upComingMeals/${upComingMealId}`, {
-  //         likes:
-  //           upComingMeals.find((upComingMeal) => upComingMeal._id === upComingMealId).likes + 1,
-  //       });
 
-  //       refetch();
-  //     } catch (error) {
-  //       console.error("Error handling", error);
-  //     }
-  //   };
+  const handleLike = async (id) => {
+    if (!user?.email) {
+      Swal.fire("You need to log in first");
+      return;
+    }
+
+    const isAlreadyLiked = likedMeals.includes(id);
+
+    if (!isAlreadyLiked) {
+      setIsLiked(true);
+      setLikeCount(likeCount + 1);
+
+      setLikedMeals([...likedMeals, id]);
+
+      await axiosSecure.patch(`/upComingMeals/${id}`, {
+        likes: likeCount + 1,
+      });
+
+      refetch();
+    } else {
+      Swal.fire("You have already liked this meal");
+    }
+  };
 
   return (
     <div className="w-full max-w-[1250px] px-[25px] mx-auto">
@@ -80,11 +98,13 @@ const UpComing = () => {
                 />
                 <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                 <IconButton
-                  //   onClick={() => handleLIke(upComingMeal._id)}
                   size="sm"
-                  color="red"
+                  color="white"
                   variant="text"
-                  className="!absolute top-4 right-4 rounded-full"
+                  className={`!absolute top-4 right-4 rounded-full ${
+                    isLiked ? "text-red-500" : ""
+                  }`}
+                  onClick={() => handleLike(upComingMeal._id)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -156,11 +176,6 @@ const UpComing = () => {
                   </Tooltip>
                 </div>
               </CardBody>
-              <CardFooter className="pt-3">
-                <AwesomeButton size="lg" className="w-full" type="secondary">
-                  Details
-                </AwesomeButton>
-              </CardFooter>
             </Card>
           ))}
         </div>

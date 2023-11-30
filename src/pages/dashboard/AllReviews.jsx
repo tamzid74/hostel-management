@@ -14,6 +14,10 @@ import { Link } from "react-router-dom";
 const AllReviews = () => {
   const axiosSecure = useAxiosSecure();
   const [isLoading, setIsLoading] = useState(true);
+  // const [sortField, setSortField] = useState("like");
+  // const [sortOrder, setSortOrder] = useState("desc");
+  const [ascLikes, setAscLikes] = useState();
+  const [ascReviews, setAscReviews] = useState();
   const { data: reviews = [], refetch } = useQuery({
     queryKey: ["reviews"],
     queryFn: async () => {
@@ -23,6 +27,28 @@ const AllReviews = () => {
       return res.data;
     },
   });
+
+  // const { data: review = [], refetch } = useQuery({
+  //   queryKey: ["reviews"],
+  //   queryFn: async () => {
+  //     setIsLoading(true);
+  //     const res = await axiosSecure.get(
+  //       `/review?sort=${sortField}&order=${sortOrder}`
+  //     );
+  //     setIsLoading(false);
+  //     return res.data;
+  //   },
+  // });
+
+  // // ... existing code
+
+  // const handleSort = (field) => {
+  //   // If the same field is clicked, toggle the order; otherwise, set order to 'desc'
+  //   setSortOrder((prevOrder) =>
+  //     sortField === field ? (prevOrder === "asc" ? "desc" : "asc") : "desc"
+  //   );
+  //   setSortField(field);
+  // };
 
   // const { data: meals = [] } = useQuery({
   //   queryKey: ["meals"],
@@ -34,7 +60,7 @@ const AllReviews = () => {
   //   },
   // });
 
-  const handleDelete = (id) => {
+  const handleDelete = (id,meal) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -50,7 +76,7 @@ const AllReviews = () => {
           refetch();
           Swal.fire({
             title: "Deleted!",
-            text: `${reviews.mealTitle} has been deleted!`,
+            text: `${meal} has been deleted!`,
             icon: "success",
           });
         });
@@ -64,7 +90,20 @@ const AllReviews = () => {
         <title>HostelHub|Dashboard|All Reviews</title>
       </Helmet>
       <SectionTitle heading="All Reviews"></SectionTitle>
-
+      <div className="flex justify-center items-center gap-x-3">
+        <button
+          className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
+          onClick={() => setAscLikes(!ascLikes)}
+        >
+          {ascLikes ? "Likes High to Low" : "Likes low to high"}
+        </button>
+        <button
+          className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
+          onClick={() => setAscReviews(!ascReviews)}
+        >
+          {ascReviews ? "Reviews High to Low" : "Reviews low to high"}
+        </button>
+      </div>
       {isLoading ? (
         <div className="w-1/2 mx-auto">
           <Loading></Loading>
@@ -183,7 +222,7 @@ const AllReviews = () => {
                             <td className="px-4 py-4 text-sm whitespace-nowrap">
                               <div className="flex items-center gap-x-6">
                                 <button
-                                  onClick={() => handleDelete(review._id)}
+                                  onClick={() => handleDelete(review._id,review.meal)}
                                   className="text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"
                                 >
                                   <svg

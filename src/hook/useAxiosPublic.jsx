@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axiosPublic = axios.create({ baseURL: "http://localhost:5000/health" });
+const axiosPublic = axios.create({ baseURL: "https://b8-a12-hostelhub-server-side.vercel.app/health" });
 const useAxiosPublic = () => {
   return axiosPublic;
 };
