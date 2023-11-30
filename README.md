@@ -11,6 +11,7 @@ Click here for live site: [https://hostelhub-6037e.web.app/](https://hostelhub-6
 - Implement a search bar in the meals routes that enables users to quickly find specific foods on the website.
 - Implement a filter in the meals routes that enables users to quickly find specific foods on the website.
 - responsive for every device
+- admin panel implement 
 - implement firebase authentication 
 - using mongodb for store my data 
 - for backend using mongoose
