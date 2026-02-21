@@ -53,23 +53,46 @@ const Register = () => {
             role: "user",
             badge: "Bronze",
           };
-          axiosPublic.post("/users", userInfo)
-            .then((res) => res.data.insertedId && console.log("user saved to backend"))
-            .catch((err) => console.error("Backend save failed:", err?.response?.data || err.message));
+          axiosPublic
+            .post("/users", userInfo)
+            .then(
+              (res) =>
+                res.data.insertedId && console.log("user saved to backend"),
+            )
+            .catch((err) =>
+              console.error(
+                "Backend save failed:",
+                err?.response?.data || err.message,
+              ),
+            );
         };
 
         if (photoFile) {
-          const storageRef = ref(storage, `profile-photos/${Date.now()}-${photoFile.name}`);
+          const storageRef = ref(
+            storage,
+            `profile-photos/${Date.now()}-${photoFile.name}`,
+          );
           uploadBytes(storageRef, photoFile)
             .then((snapshot) => getDownloadURL(snapshot.ref))
             .then((photoURL) => {
-              setUser((prev) => (prev ? { ...prev, displayName: data.name, photoURL, photo: photoURL } : prev));
+              setUser((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      displayName: data.name,
+                      photoURL,
+                      photo: photoURL,
+                    }
+                  : prev,
+              );
               return updateUser(data.name, photoURL).then(() => photoURL);
             })
             .then((photoURL) => saveToBackend(photoURL))
             .catch(() => saveToBackend(null));
         } else {
-          updateUser(data.name).then(() => saveToBackend(null)).catch(() => saveToBackend(null));
+          updateUser(data.name)
+            .then(() => saveToBackend(null))
+            .catch(() => saveToBackend(null));
         }
       })
       .catch((error) => {
@@ -108,18 +131,22 @@ const Register = () => {
                     ) : (
                       <span className="flex flex-col items-center gap-1 text-primary/70">
                         <FaCamera className="text-2xl" />
-                        <span className="text-xs font-medium">Choose photo</span>
+                        <span className="text-xs font-medium">
+                          Choose photo
+                        </span>
                       </span>
                     )}
                   </div>
                   {photoPreview && (
-                    <span className="text-xs text-primary link link-hover">Change photo</span>
+                    <span className="text-xs text-primary link link-hover">
+                      Change photo
+                    </span>
                   )}
                 </label>
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text ">Name</span>
+                  <span className="label-text font-bold">Name</span>
                 </label>
                 <input
                   type="text"
@@ -135,7 +162,7 @@ const Register = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text ">Email</span>
+                  <span className="label-text font-bold ">Email</span>
                 </label>
                 <input
                   type="email"
@@ -151,7 +178,7 @@ const Register = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text ">Password</span>
+                  <span className="label-text font-bold">Password</span>
                 </label>
                 <div className="relative">
                   <input
