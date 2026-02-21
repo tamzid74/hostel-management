@@ -101,7 +101,7 @@ const MealDetails = () => {
       mealId: _id,
       meal: mealTitle,
       email: user?.email,
-      pic: user?.photoURL,
+      pic: user?.photo ?? user?.photoURL,
       user_name: user?.displayName,
       review: review,
       reviews: reviews,

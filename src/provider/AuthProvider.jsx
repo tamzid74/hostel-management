@@ -41,9 +41,22 @@ const AuthProvider = ({ children }) => {
   };
 
   const updateUser = (name, photo) => {
-    return updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL: photo,
+    const updates = { displayName: name };
+    if (photo) {
+      updates.photoURL = photo;
+    }
+    return updateProfile(auth.currentUser, updates).then(() => {
+      if (!auth.currentUser) return;
+      const photoUrl = photo != null ? photo : auth.currentUser.photoURL;
+      setUser((prev) => {
+        if (!prev) return { ...auth.currentUser, photo: photoUrl };
+        return {
+          ...prev,
+          displayName: name ?? prev.displayName,
+          photoURL: photoUrl,
+          photo: photoUrl,
+        };
+      });
     });
   };
 
@@ -55,9 +68,7 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
-      // const userEmail = currentUser?.email || user?.email;
-      // const loggedUser = { email: userEmail };
-      setUser(currentUser);
+      setUser(currentUser ? { ...currentUser, photo: currentUser.photoURL } : null);
       setLoading(false);
       // if (currentUser) {
         

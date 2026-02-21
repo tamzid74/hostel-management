@@ -89,8 +89,14 @@ const Navbar = () => {
             {user ? (
               <div className="dropdown dropdown-end z-10">
                 <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
-                  <div className="w-10 rounded-full">
-                    {user ? <img src={user.photoURL} /> : ""}
+                  <div className="w-10 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center ring-2 ring-primary/30">
+                    {(user.photo ?? user.photoURL) ? (
+                      <img src={user.photo ?? user.photoURL} alt={user.displayName || "Profile"} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-primary font-bold text-lg">
+                        {user.displayName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || "?"}
+                      </span>
+                    )}
                   </div>
                 </label>
                 <ul

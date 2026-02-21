@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa6";
+import { FaEye, FaEyeSlash, FaCamera } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
 import { AuthContext } from "../provider/Authprovider";
@@ -11,11 +11,17 @@ import Lottie from "lottie-react";
 import regAnimation from "../assets/images/Register.json";
 import { useForm } from "react-hook-form";
 import useAxiosPublic from "../hook/useAxiosPublic";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import app from "../config/firebase.config";
+
+const storage = getStorage(app);
 
 const Register = () => {
   const { createUser, updateUser, setUser } = useContext(AuthContext);
   const axiosPublic = useAxiosPublic();
   const [showPassword, setShowPassword] = useState(false);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
   const navigate = useNavigate();
   const {
     register,
@@ -23,35 +29,51 @@ const Register = () => {
     formState: { errors },
   } = useForm();
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+      setPhotoPreview(URL.createObjectURL(file));
+    }
+  };
+
   const onSubmit = (data) => {
-    console.log(data);
-    const toastId = toast.loading("Creating User...");
+    const toastId = toast.loading("Creating account...");
+
     createUser(data.email, data.password)
-      .then((result) => {
-        updateUser(data.name, data.photoURL).then(() => {
-          setUser((prev) => {
-            prev.displayName = data.name;
-            prev.photoURL = data.photoURL;
-            return { ...prev };
-          });
-          toast.success("User Created", { id: toastId });
-          navigate("/");
+      .then(() => {
+        toast.success("Account created successfully....", { id: toastId });
+        navigate("/", { replace: true });
+
+        const saveToBackend = (photoURL) => {
           const userInfo = {
             name: data.name,
             email: data.email,
-            photoURL: data.photoURL,
+            photoURL: photoURL ?? null,
             role: "user",
             badge: "Bronze",
           };
-          axiosPublic.post("/users", userInfo).then((res) => {
-            if (res.data.insertedId) {
-              console.log("user saved");
-            }
-          });
-        });
+          axiosPublic.post("/users", userInfo)
+            .then((res) => res.data.insertedId && console.log("user saved to backend"))
+            .catch((err) => console.error("Backend save failed:", err?.response?.data || err.message));
+        };
+
+        if (photoFile) {
+          const storageRef = ref(storage, `profile-photos/${Date.now()}-${photoFile.name}`);
+          uploadBytes(storageRef, photoFile)
+            .then((snapshot) => getDownloadURL(snapshot.ref))
+            .then((photoURL) => {
+              setUser((prev) => (prev ? { ...prev, displayName: data.name, photoURL, photo: photoURL } : prev));
+              return updateUser(data.name, photoURL).then(() => photoURL);
+            })
+            .then((photoURL) => saveToBackend(photoURL))
+            .catch(() => saveToBackend(null));
+        } else {
+          updateUser(data.name).then(() => saveToBackend(null)).catch(() => saveToBackend(null));
+        }
       })
       .catch((error) => {
-        toast.error(`${error.message}`, { id: toastId });
+        toast.error(error.message || "Registration failed", { id: toastId });
       });
   };
 
@@ -67,19 +89,33 @@ const Register = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="card-body">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">PhotoUrl</span>
+                  <span className="label-text font-bold">Photo</span>
                 </label>
-                <input
-                  type="text"
-                  placeholder="PhotoUrl"
-                  {...register("photoURL", { required: true })}
-                  className="input input-bordered rounded-full"
-                />
-                {errors.photo && (
-                  <span className="text-sm text-red-600">
-                    This field is required
-                  </span>
-                )}
+                <label className="cursor-pointer flex flex-col items-center gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                  />
+                  <div className="w-24 h-24 rounded-full border-2 border-dashed border-primary/50 bg-base-200 flex items-center justify-center overflow-hidden hover:border-primary hover:bg-primary/5 transition-all">
+                    {photoPreview ? (
+                      <img
+                        src={photoPreview}
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex flex-col items-center gap-1 text-primary/70">
+                        <FaCamera className="text-2xl" />
+                        <span className="text-xs font-medium">Choose photo</span>
+                      </span>
+                    )}
+                  </div>
+                  {photoPreview && (
+                    <span className="text-xs text-primary link link-hover">Change photo</span>
+                  )}
+                </label>
               </div>
               <div className="form-control">
                 <label className="label">
