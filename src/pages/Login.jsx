@@ -68,6 +68,7 @@ const Login = () => {
                 {emailError && (
                   <p className="text-sm text-red-600">{emailError}</p>
                 )}
+                <p className="text-xs text-primary/80 mt-1 font-extrabold">Admin demo: aam@aam.com</p>
               </div>
               <div className="form-control">
                 <label className="label">
@@ -112,6 +113,7 @@ const Login = () => {
                 {passError && (
                   <p className="text-sm text-red-600">{passError}</p>
                 )}
+                <p className="text-xs text-primary/80 mt-1 font-extrabold">Admin demo: 12345Aa#</p>
                 <label className="label">
                   <a href="#" className="label-text-alt link link-hover ">
                     Forgot password?
