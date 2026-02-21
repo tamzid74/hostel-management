@@ -51,7 +51,7 @@ const Login = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="card-body">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Email</span>
+                  <span className="label-text font-bold">Email</span>
                 </label>
                 <input
                   type="email"
@@ -72,7 +72,7 @@ const Login = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Password</span>
+                  <span className="label-text font-bold">Password</span>
                 </label>
                 <div className="relative">
                   <input
