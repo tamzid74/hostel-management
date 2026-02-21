@@ -15,22 +15,25 @@ HostelHub is a robust web application developed using React, React Router, Mongo
 
 Click here for the live site: [https://hostelhub-6037e.web.app/](https://hostelhub-6037e.web.app/)
 
+Admin Email: aam@aam.com
+Admin Password: 12345Aa#
+
 <<<<<<< HEAD
-:white_check_mark: Features implement in this project:
+:white_check_mark: Features implemented in this project:
 
 - Provide clear and intuitive navigation menus to help users move through the website and find what they're looking for.
 - Implement a search bar in the meals routes that enables users to quickly find specific foods on the website.
 - Implement a filter in the meals routes that enables users to quickly find specific foods on the website.
 - responsive for every device
-- admin panel implement
-- implement firebase authentication
-- using mongodb for store my data
+- Admin panel implementation
+- implement Firebase authentication
+- using MongoDB to store my data
 - for backend using mongoose
-- user can requested meal
-- user can like each meal
-- user can review each meal
-- sweet alert-2,react host toast implement in my website (when you try to login and registration successfully then you will get a toast)
-- implement react router
+- The user can request a meal
+- The user can like each meal
+- The user can review each meal
+- sweet alert-2, React host toast implemented in my website (when you try to log in and register successfully, then you will get a toast)
+- implement React Router
 =======
 
 ## 🚩Features implemented in this project:
